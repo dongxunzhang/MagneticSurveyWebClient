@@ -1,0 +1,75 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>主页</title>
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+</head>
+
+<body>
+
+    <div style="margin: 30px;">
+        <div id="questionText" style="height: 200px;"></div>
+        <div id="typeText" style="margin-top: 10px; margin-bottom: 10px;"></div>
+        <button type="button" class="btn btn-primary"  onclick="nextQuestion()">下一题</button>
+    </div>
+
+    <script src="js/bootstrap.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script>
+    <script>
+
+        $(function () {
+            var userid = localStorage.getItem("userid");
+
+            if (userid == null || userid == '') {
+                alert('请先登录！');
+                return;
+            }
+
+            $.ajax({
+                type: 'Get',
+                url: 'http://localhost:5127/Main/InitUserQuestions?id=' + userid,
+                success: function (data) {
+                    if (data != 1) {
+                        alert('初始化失败！');
+                    }
+                },
+                error: function (msg) {
+                    alert(msg.responseText);
+                }
+            });
+
+            nextQuestion();
+        })
+
+        //下一题
+        function nextQuestion() {
+
+            var userid = localStorage.getItem("userid");
+
+            if (userid == null || userid == '') {
+                alert('请先登录！');
+                return;
+            }
+
+            $.ajax({
+                type: 'Get',
+                url: 'http://localhost:5127/Main/NextUserQuestions?id=' + userid,
+                success: function (data) {
+
+                    console.log(data);
+                    document.getElementById("questionText").innerHTML ='问题：'+ data.content;
+                    document.getElementById("typeText").innerHTML ='类型：'+ data.type;
+                },
+                error: function (msg) {
+                    alert(msg.responseText);
+                }
+            });
+        }
+
+    </script>
+</body>
+
+</html>

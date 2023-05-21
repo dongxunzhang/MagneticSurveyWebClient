@@ -1,0 +1,364 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>管理</title>
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+</head>
+
+<body>
+    <div style="margin: 20px;">
+        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home"
+                    type="button" role="tab" aria-controls="pills-home" aria-selected="true">学生</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile"
+                    type="button" role="tab" aria-controls="pills-profile" aria-selected="false">题库</button>
+            </li>
+        </ul>
+        <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab"
+                tabindex="0">
+
+                <h3 align="center">学生</h3>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userModal"
+                    onclick="addUser()">新增</button>
+                <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="userModalLabel">新增学生信息</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="mb-3">
+                                        <input type="text" class="form-control" id="user-id" placeholder="ID" disabled
+                                            aria-label="ID">
+                                    </div>
+                                    <div class="mb-3">
+                                        <input type="text" class="form-control" id="user-name" placeholder="用户名"
+                                            aria-label="用户名">
+                                    </div>
+                                    <div class="mb-3">
+                                        <input type="text" class="form-control" id="user-email" placeholder="Email"
+                                            aria-label="Email"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <input type="text" class="form-control" id="user-pwd" placeholder="密码"
+                                            aria-label="密码"></textarea>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                                <button type="button" class="btn btn-primary" onclick="addRow()">保存</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <table class="table table-bordered" style="margin-top: 30px;" id="ta">
+                    <thead>
+                        <tr style="text-align: center;font-weight: bold;">
+                            <td>ID</td>
+                            <td>用户名</td>
+                            <td>Email</td>
+                            <td>密码</td>
+                            <td>操作</td>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab"
+                tabindex="0">
+                <h3 align="center">题库</h3>
+
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#questionModel"
+                    onclick="addQuestion()">新增</button>
+                <div class="modal fade" id="questionModel" tabindex="-1" aria-labelledby="questionModelLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="questionModelLabel">新增学生信息</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="mb-3">
+                                        <input type="text" class="form-control" id="question-id" placeholder="ID"
+                                            disabled aria-label="ID">
+                                    </div>
+                                    <div class="mb-3">
+                                        <textarea class="form-control" style="height: 200px;" placeholder="问题"
+                                            aria-label="问题" id="question-text"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <select class="form-select" id="question-type" aria-label="类型">
+                                            <option value="简答题">简答题</option>
+                                            <option value="填空题">填空题</option>
+                                            <option value="判断题">判断题</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                                <button type="button" class="btn btn-primary" onclick="addQuestionRow()">保存</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <table class="table table-bordered" style="margin-top: 30px;" id="qt">
+                    <thead>
+                        <tr style="text-align: center;font-weight: bold;">
+                            <td>ID</td>
+                            <td>问题</td>
+                            <td>类型</td>
+                            <td>操作</td>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="js/bootstrap.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script>
+    <script>
+
+        $(function () {
+            $.ajax({
+                type: 'Get',
+                url: 'http://localhost:5127/Main/GetUsers',
+                success: function (data) {
+                    var ta = document.getElementById("ta");
+                    data.forEach(element => {
+                        var tr = ta.insertRow(1);
+                        //添加单元格
+                        var cell0 = tr.insertCell(0);
+                        cell0.innerHTML = element.id;
+                        var cell1 = tr.insertCell(1);
+                        cell1.innerHTML = element.userName;
+                        var cell2 = tr.insertCell(2);
+                        cell2.innerHTML = element.email;
+                        var cell3 = tr.insertCell(3);
+                        cell3.innerHTML = element.pwd;
+                        var cell4 = tr.insertCell(4);
+                        cell4.style.textAlign = "center";
+                        cell4.innerHTML =
+                            '<button type="button" class="btn btn-link" onclick="updateRow(this)">编辑</button><button type="button" class="btn btn-link" onclick="delRow(this)">删除</button>';
+                    });
+                },
+                error: function (msg) {
+                    alert(msg.responseText);
+                }
+            });
+
+            $.ajax({
+                type: 'Get',
+                url: 'http://localhost:5127/Main/GetQuestions',
+                success: function (data) {
+                    var ta = document.getElementById("qt");
+                    data.forEach(element => {
+                        var tr = ta.insertRow(1);
+                        //添加单元格
+                        var cell0 = tr.insertCell(0);
+                        cell0.innerHTML = element.id;
+                        var cell1 = tr.insertCell(1);
+                        cell1.innerHTML = element.content;
+                        var cell2 = tr.insertCell(2);
+                        cell2.innerHTML = element.type;
+                        var cell3 = tr.insertCell(3);
+                        cell3.style.textAlign = "center";
+                        cell3.innerHTML =
+                            '<button type="button" class="btn btn-link" onclick="updateQTRow(this)">编辑</button><button type="button" class="btn btn-link" onclick="delQTRow(this)">删除</button>';
+                    });
+                },
+                error: function (msg) {
+                    alert(msg.responseText);
+                }
+            });
+        })
+
+        //删除指定行
+        function delRow(btn) {
+            //获取table对象
+            var ta = document.getElementById("ta");
+            //获取要删除行的对象
+            var tr = btn.parentNode.parentNode;
+            $.ajax({
+                type: 'Get',
+                url: 'http://localhost:5127/Main/Del?id=' + $(btn).parent().parent().children()[0].innerHTML,
+                success: function (data) {
+                    if (data == 1) {
+                        //删除行
+                        ta.deleteRow(tr.rowIndex);
+                    }
+                    else {
+                        alert('删除失败！');
+                    }
+                },
+                error: function (msg) {
+                    alert(msg.responseText);
+                }
+            });
+        }
+
+        function delQTRow(btn) {
+            //获取table对象
+            var ta = document.getElementById("qt");
+            //获取要删除行的对象
+            var tr = btn.parentNode.parentNode;
+            $.ajax({
+                type: 'Get',
+                url: 'http://localhost:5127/Main/DelQt?id=' + $(btn).parent().parent().children()[0].innerHTML,
+                success: function (data) {
+                    if (data == 1) {
+                        //删除行
+                        ta.deleteRow(tr.rowIndex);
+                    }
+                    else {
+                        alert('删除失败！');
+                    }
+                },
+                error: function (msg) {
+                    alert(msg.responseText);
+                }
+            });
+        }
+
+        //编辑
+        function updateRow(row) {
+            $('#userModal').modal('show');
+
+            $("#user-id").val($(row).parent().parent().children()[0].innerHTML);
+            $("#user-name").val($(row).parent().parent().children()[1].innerHTML);
+            $("#user-email").val($(row).parent().parent().children()[2].innerHTML);
+            $("#user-pwd").val($(row).parent().parent().children()[3].innerHTML);
+        }
+
+        function updateQTRow(row) {
+            $('#questionModel').modal('show');
+
+            $("#question-id").val($(row).parent().parent().children()[0].innerHTML);
+            $("#question-text").val($(row).parent().parent().children()[1].innerHTML);
+            $("#question-type").val($(row).parent().parent().children()[2].innerHTML);
+        }
+
+        //添加用户
+        function addUser(row) {
+            $("#user-id").val('');
+            $("#user-name").val('');
+            $("#user-email").val('');
+            $("#user-pwd").val('');
+        }
+
+        //添加问题
+        function addQuestion(row) {
+            $("#question-id").val('');
+            $("#question-text").val('');
+            $("#question-type").val('');
+        }
+
+        //保存用户信息
+        function addRow() {
+            var userid = $("#user-id").val();
+            var userName = $("#user-name").val();
+            var email = $("#user-email").val();
+            var passWord = $("#user-pwd").val();
+
+            if (userName == null || userName == '') {
+                alert('用户名不能为空！');
+                return;
+            }
+
+            if (email == null || email == '') {
+                alert('Email不能为空！');
+                return;
+            }
+
+            if (passWord == null || passWord == '') {
+                alert('密码不能为空！');
+                return;
+            }
+
+            if (userid == null || userid == '') {
+                userid = 0;
+            }
+
+            $.ajax({
+                type: 'Get',
+                dataType: 'text',
+                url: 'http://localhost:5127/Main/Register?email=' + email + '&pwd=' + passWord + '&username=' + userName + '&id=' + userid,
+                success: function (data) {
+                    if (data == 1) {
+
+                        $('#userModal').modal('hide');
+
+                        location.reload()
+                    }
+                    else {
+                        alert('注册失败！');
+                    }
+                },
+                error: function (msg) {
+                    alert(msg.responseText);
+                }
+            });
+        }
+
+        //添加问题行
+        function addQuestionRow() {
+            var id = $("#question-id").val();
+            var question = $("#question-text").val();
+            var type = $("#question-type").val();
+
+            if (question == null || question == '') {
+                alert('问题不能为空！');
+                return;
+            }
+
+            if (type == null || type == '') {
+                alert('类型不能为空！');
+                return;
+            }
+
+            if (id == null || id == '') {
+                id = 0;
+            }
+
+            $.ajax({
+                type: 'Get',
+                dataType: 'text',
+                url: 'http://localhost:5127/Main/AddQuestions?content=' + question + '&type=' + type + '&id=' + id,
+                success: function (data) {
+                    if (data == 1) {
+
+                        $('#questionModel').modal('hide');
+
+                        location.reload()
+                    }
+                    else {
+                        alert('注册失败！');
+                    }
+                },
+                error: function (msg) {
+                    alert(msg.responseText);
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
