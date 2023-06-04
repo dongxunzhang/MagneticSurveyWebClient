@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>登录</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="robots" content="all,follow">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+</head>
+
+<body>
+    <div class="page login-page">
+        <div class="container d-flex align-items-center">
+            <div class="form-holder has-shadow">
+                <div class="row">
+                    <!-- Logo & Information Panel-->
+                    <div class="col-lg-6">
+                        <div class="info d-flex align-items-center">
+                            <div class="content">
+                                <div class="logo">
+                                    <h1>欢迎登录</h1>
+                                </div>
+                                <p>XXXX管理系统</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Form Panel    -->
+                    <div class="col-lg-6 bg-white">
+                        <div class="form d-flex align-items-center">
+                            <div class="content">
+                                <div class="form-group">
+                                    <input id="login-username" type="text" name="userName" required data-msg="请输入用户名"
+                                        placeholder="用户名" value="admin" class="input-material">
+                                </div>
+                                <div class="form-group">
+                                    <input id="login-password" type="password" name="passWord" required data-msg="请输入密码"
+                                        placeholder="密码" class="input-material">
+                                </div>
+                                <button id="login" type="submit" class="btn btn-primary">登录</button>
+                                <br />
+                                <small>没有账号?</small><a href="register.html" class="signup">&nbsp;注册</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- JavaScript files-->
+    <script src="js/bootstrap.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/jquery.js"></script>
+    <!-- Main File-->
+    <script>
+
+        var db;
+        $(function () {
+
+            var request = window.indexedDB.open("SurveyDb", 3);
+
+            request.onerror = function (event) {
+                alert('数据库打开报错');
+            };
+            request.onsuccess = function (event) {
+                db = event.target.result;
+            }
+            request.onupgradeneeded = function (event) {
+                db = event.target.result;
+
+                var objectStore = db.createObjectStore('users', { keyPath: 'id', autoIncrement: true });
+                objectStore.createIndex('name', 'name', { unique: false });
+                objectStore.createIndex('email', 'email', { unique: true });
+                objectStore.createIndex('pwd', 'pwd', { unique: false });
+
+                var qtStore = db.createObjectStore('questions', { keyPath: 'id', autoIncrement: true });
+                qtStore.createIndex('type', 'type', { unique: false });
+                qtStore.createIndex('content', 'content', { unique: false });
+
+            };
+
+            /*登录*/
+            $("#login").click(function () {
+                var userName = $("#login-username").val();
+                var passWord = $("#login-password").val();
+
+                if (userName == 'admin' && passWord == 'admin') {
+                    location = "manage.html"
+                }
+                else {
+
+                    var transaction = db.transaction(['users'], 'readonly');
+                    var store = transaction.objectStore('users');
+                    var index = store.index('email');
+                    var request = index.get(userName);
+
+                    request.onsuccess = function (e) {
+                        var result = e.target.result;
+                        if (result) {
+                            if (result.pwd == passWord) {
+                                location = "home.html"
+                            }
+                            else {
+                                alert('密码有误！');
+                            }
+                        } else {
+                            alert('用户名不存在！');
+                        }
+                    }
+
+
+                    // $.ajax({
+                    //     type: 'Get',
+                    //     url: 'http://localhost:5000/Main/Login?name=' + userName + '&pwd=' + passWord,
+                    //     success: function (data) {
+                    //         if (data == 1) {
+
+                    //             localStorage.setItem('userid', data);
+
+                    //             location = "home.html"
+
+                    //         }
+                    //         else {
+                    //             alert('用户名密码有误！');
+                    //         }
+                    //     },
+                    //     error: function (msg) {
+                    //         alert(msg.responseText);
+                    //     }
+                    // });
+                }
+            })
+        })
+    </script>
+</body>
+
+</html>
